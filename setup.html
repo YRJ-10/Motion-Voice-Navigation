@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Voice Nav Setup</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; text-align: center; background-color: #f9f9f9; }
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; }
+        h1 { color: #333; font-size: 24px; }
+        p { color: #666; line-height: 1.5; }
+        button { background-color: #4CAF50; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+        button:hover { background-color: #45a049; }
+        #status { margin-top: 20px; font-weight: bold; color: #4CAF50; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Izin Mikrofon Dibutuhkan 🎙️</h1>
+        <p>Ekstensi Voice Nav memerlukan akses ke mikrofon Anda agar dapat mendengarkan perintah navigasi suara.</p>
+        <p>Klik tombol di bawah ini, lalu pilih <b>"Allow" / "Izinkan"</b> saat browser meminta izin.</p>
+        <button id="request-btn">Minta Izin Mikrofon</button>
+        <p id="status"></p>
+    </div>
+    <script src="setup.js"></script>
+</body>
+</html>

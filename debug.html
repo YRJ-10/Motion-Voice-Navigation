@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Kamera Debugger</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #222; color: #fff; }
+        video { border: 2px solid #fff; max-width: 100%; margin-top: 10px; background: #000; }
+        #log { margin-top: 20px; padding: 10px; background: #111; font-family: monospace; border-left: 4px solid #4CAF50; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Tes Kamera Murni (Tanpa Logic)</h1>
+    <p>Halaman ini murni memanggil kamera dengan parameter standar (kosong) tanpa batasan resolusi atau deteksi wajah apa pun.</p>
+    <button id="start-btn">Nyalakan Kamera & Mic Murni</button>
+    <br>
+    <video id="video" autoplay playsinline controls muted></video>
+    <div id="log">Tunggu aksi...<br></div>
+    <script src="debug.js"></script>
+</body>
+</html>

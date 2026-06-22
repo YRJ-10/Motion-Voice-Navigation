@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Kamera Debugger",
+  "version": "1.0",
+  "description": "Ekstensi murni untuk tes konektivitas kamera dan mic tanpa logic.",
+  "action": {},
+  "background": {
+    "service_worker": "bg.js"
+  }
+}

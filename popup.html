@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="popup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="icons/icon_48.png" alt="Logo" class="logo">
+            <h2>Motion Voice Nav</h2>
+        </div>
+        
+        <p class="subtitle">Kontrol browser tanpa sentuhan.</p>
+        
+        <button id="toggle-btn" class="start-btn">
+            <span class="btn-icon">🎙️</span> Buka Mesin Pendeteksi
+        </button>
+        
+        <div class="instructions">
+            <p class="inst-title">Daftar Perintah Suara</p>
+            <div class="cmd-list">
+                <div class="cmd-item">
+                    <span>↕️ Navigasi & Scroll</span>
+                    <span>Bawah, Atas, Kanan, Kiri, Puncak, Dasar</span>
+                </div>
+                <div class="cmd-item">
+                    <span>🤖 Auto-Scroll & Like</span>
+                    <span>"Baca", "Cepat", "Lambat", "Suka"</span>
+                </div>
+                <div class="cmd-item">
+                    <span>🌐 Manajemen Tab</span>
+                    <span>Tab Baru, Tutup Tab, Geser Kanan/Kiri</span>
+                </div>
+                <div class="cmd-item">
+                    <span>🔍 Pencarian Cerdas</span>
+                    <span>"Buka [nama web]", "Cari [kata]"</span>
+                </div>
+                <div class="cmd-item">
+                    <span>⚙️ Aksi Browser & Media</span>
+                    <span>Segarkan, Kembali, Perbesar, Perkecil</span>
+                </div>
+                <div class="cmd-item">
+                    <span>⌨️ Aksi Keyboard</span>
+                    <span>Salin, Tempel, Enter, Spasi (Jeda Video)</span>
+                </div>
+                <div class="cmd-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #444;">
+                    <span style="color: #4CAF50;">🤖 AI Motion Control</span>
+                    <span style="font-size: 0.85em; color: #aaa;">Atas/Bawah = Scroll Atas/Bawah<br>Kanan/Kiri = Scroll Kanan/Kiri</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

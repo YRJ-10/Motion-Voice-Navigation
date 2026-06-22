@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Kamera Debugger Murni</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #222; color: #fff; }
+        video { border: 2px solid #fff; max-width: 100%; margin-top: 10px; background: #000; }
+        #log { margin-top: 20px; padding: 10px; background: #111; font-family: monospace; border-left: 4px solid #4CAF50; height: 300px; overflow-y: auto; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Tes Kamera Murni (Lingkungan Terisolasi)</h1>
+    <p>Ini adalah Ekstensi Debugging terpisah yang tidak memiliki kode batasan resolusi, deteksi wajah, maupun voice command.</p>
+    <button id="start-btn">Nyalakan Kamera & Mic Murni</button>
+    <br>
+    <video id="video" autoplay playsinline controls muted></video>
+    <div id="log">Tunggu aksi...<br></div>
+    <script src="debug.js"></script>
+</body>
+</html>

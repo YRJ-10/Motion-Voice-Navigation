@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# App Memory
+MotionServer/kamera.txt
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Agents Config
+.agents/
