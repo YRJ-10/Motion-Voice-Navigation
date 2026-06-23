@@ -3,6 +3,56 @@ if (typeof window.voiceNavInjected === 'undefined') {
     window.autoScrollInterval = null;
     window.autoScrollSpeed = 2;
 
+    let activeClickLabels = [];
+    let clickMap = new Map();
+
+    function removeClickLabels() {
+        activeClickLabels.forEach(el => el.remove());
+        activeClickLabels = [];
+        clickMap.clear();
+    }
+
+    function drawClickLabels() {
+        removeClickLabels();
+        const selectors = 'a, button, input, [role="button"], video, .yt-simple-endpoint';
+        const elements = document.querySelectorAll(selectors);
+        
+        let counter = 1;
+        elements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const isVisible = rect.width > 0 && rect.height > 0 && 
+                rect.top < (window.innerHeight || document.documentElement.clientHeight) && 
+                rect.bottom > 0 && 
+                rect.left < (window.innerWidth || document.documentElement.clientWidth) && 
+                rect.right > 0;
+                
+            if (isVisible) {
+                const label = document.createElement('div');
+                label.innerText = counter;
+                label.style.cssText = `
+                    position: fixed;
+                    top: ${rect.top <= 0 ? 5 : rect.top}px;
+                    left: ${rect.left <= 0 ? 5 : rect.left}px;
+                    background-color: #ffeb3b;
+                    color: #000;
+                    font-family: Arial, sans-serif;
+                    font-weight: bold;
+                    font-size: 13px;
+                    padding: 2px 5px;
+                    border-radius: 4px;
+                    border: 2px solid #000;
+                    z-index: 2147483647;
+                    pointer-events: none;
+                    box-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+                `;
+                document.body.appendChild(label);
+                activeClickLabels.push(label);
+                clickMap.set(counter, el);
+                counter++;
+            }
+        });
+    }
+
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.type === 'EXECUTE_COMMAND') {
             const cmd = request.command;
@@ -30,31 +80,62 @@ if (typeof window.voiceNavInjected === 'undefined') {
             else if (cmd === 'salin') { document.execCommand('copy'); }
             else if (cmd === 'tempel') { document.execCommand('paste'); }
             else if (cmd === 'layar_penuh') {
-                if (!document.fullscreenElement) {
-                    if (window.location.hostname.includes('youtube.com')) {
-                        const btn = document.querySelector('.ytp-fullscreen-button');
-                        if (btn) btn.click();
-                    } else {
-                        const video = document.querySelector('video');
-                        if (video && video.requestFullscreen) {
-                            video.requestFullscreen().catch(() => {});
-                        } else {
-                            document.documentElement.requestFullscreen().catch(() => {});
-                        }
-                    }
-                } else {
-                    if (document.exitFullscreen) document.exitFullscreen();
+                const player = document.querySelector('.html5-video-player') || document.querySelector('video');
+                if (player) {
+                    player.classList.add('ai-fake-fullscreen');
+                    player.style.cssText = "position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 2147483647 !important; background: black !important;";
                 }
             }
             else if (cmd === 'keluar_layar') {
-                if (document.fullscreenElement) {
-                    if (window.location.hostname.includes('youtube.com')) {
-                        const btn = document.querySelector('.ytp-fullscreen-button');
-                        if (btn) btn.click();
-                        else if (document.exitFullscreen) document.exitFullscreen();
-                    } else {
-                        if (document.exitFullscreen) document.exitFullscreen();
+                const player = document.querySelector('.ai-fake-fullscreen');
+                if (player) {
+                    player.classList.remove('ai-fake-fullscreen');
+                    player.style.cssText = "";
+                }
+            }
+            else if (cmd === 'putar_video') {
+                if (window.location.hostname.includes('youtube.com')) {
+                    const player = document.querySelector('#movie_player') || document.querySelector('.html5-video-player');
+                    if (player) player.focus();
+                    const btn = document.querySelector('.ytp-play-button');
+                    if (btn) btn.click();
+                } else {
+                    const video = document.querySelector('video');
+                    if (video) {
+                        if (video.paused) video.play().catch(()=>{});
+                        else video.pause();
                     }
+                }
+            }
+            else if (cmd === 'suara_video') {
+                if (window.location.hostname.includes('youtube.com')) {
+                    const player = document.querySelector('#movie_player') || document.querySelector('.html5-video-player');
+                    if (player) player.focus();
+                    const btn = document.querySelector('.ytp-mute-button');
+                    if (btn) btn.click();
+                } else {
+                    const video = document.querySelector('video');
+                    if (video) {
+                        video.muted = !video.muted;
+                    }
+                }
+            }
+            
+            // --- Fitur Klik Cerdas ---
+            else if (cmd === 'mode_klik') {
+                drawClickLabels();
+            }
+            else if (cmd === 'batal_klik') {
+                removeClickLabels();
+            }
+            else if (cmd === 'eksekusi_klik') {
+                const target = clickMap.get(payload); // payload adalah angka int
+                if (target) {
+                    target.focus();
+                    target.click();
+                    const clickEvent = new MouseEvent('click', { view: window, bubbles: true, cancelable: true });
+                    target.dispatchEvent(clickEvent);
+                    removeClickLabels();
                 }
             }
             

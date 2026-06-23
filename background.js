@@ -40,6 +40,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         } else if (cmd === 'perkecil') {
             chrome.tabs.getZoom(activeTab.id, (zoom) => chrome.tabs.setZoom(activeTab.id, Math.max(0.25, zoom - 0.25)));
             return;
+        } else if (cmd === 'layar_penuh') {
+            chrome.windows.update(activeTab.windowId, { state: 'fullscreen' });
+        } else if (cmd === 'keluar_layar') {
+            chrome.windows.update(activeTab.windowId, { state: 'maximized' });
         }
         
         if (activeTab.url && (activeTab.url.startsWith('chrome://') || activeTab.url.includes(chrome.runtime.id))) {

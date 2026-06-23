@@ -60,6 +60,18 @@ function startRecognition() {
         else if (newPhrase.includes('tempel') || newPhrase.includes('paste')) cmd = 'tempel';
         else if (newPhrase.includes('layar penuh') || newPhrase.includes('full screen')) cmd = 'layar_penuh';
         else if (newPhrase.includes('keluar layar') || newPhrase.includes('exit fullscreen')) cmd = 'keluar_layar';
+        else if (newPhrase.includes('putar') || newPhrase.includes('jeda') || newPhrase.includes('stop') || newPhrase.includes('play') || newPhrase.includes('pause')) cmd = 'putar_video';
+        else if (newPhrase.includes('bisukan') || newPhrase.includes('mute') || newPhrase.includes('suara')) cmd = 'suara_video';
+        
+        // --- Fitur Klik Cerdas ---
+        else if (newPhrase === 'klik' || newPhrase === 'mode klik' || newPhrase === 'tampilkan klik') cmd = 'mode_klik';
+        else if (newPhrase === 'batal' || newPhrase === 'batal klik' || newPhrase === 'cancel') cmd = 'batal_klik';
+        else if (newPhrase.startsWith('klik ')) {
+            let target = newPhrase.substring(5).trim();
+            const numMap = {'satu':1,'dua':2,'tiga':3,'empat':4,'lima':5,'enam':6,'tujuh':7,'delapan':8,'sembilan':9,'sepuluh':10,'sebelas':11,'dua belas':12,'tiga belas':13,'dua puluh':20,'kosong':0};
+            let num = numMap[target] !== undefined ? numMap[target] : parseInt(target);
+            if (!isNaN(num)) { cmd = 'eksekusi_klik'; payload = num; }
+        }
         else if (newPhrase.includes('cari ')) {
             cmd = 'cari';
             payload = newPhrase.substring(newPhrase.indexOf('cari ') + 5).trim();
@@ -80,6 +92,16 @@ function startRecognition() {
                 if (['segarkan', 'refresh', 'ulang'].includes(w)) { cmd = 'segarkan'; break; }
                 if (['kembali', 'mundur', 'balik'].includes(w)) { cmd = 'kembali'; break; }
                 if (['penuh', 'fullscreen'].includes(w)) { cmd = 'layar_penuh'; break; }
+                if (['putar', 'jeda', 'stop', 'play', 'pause'].includes(w)) { cmd = 'putar_video'; break; }
+                if (['bisukan', 'mute', 'suara', 'bisik'].includes(w)) { cmd = 'suara_video'; break; }
+                
+                // Fitur Klik Cerdas
+                if (['klik'].includes(w)) { cmd = 'mode_klik'; break; }
+                if (['batal', 'cancel'].includes(w)) { cmd = 'batal_klik'; break; }
+                
+                const numMapSingle = {'satu':1,'dua':2,'tiga':3,'empat':4,'lima':5,'enam':6,'tujuh':7,'delapan':8,'sembilan':9,'sepuluh':10};
+                let n = numMapSingle[w] !== undefined ? numMapSingle[w] : parseInt(w);
+                if (!isNaN(n)) { cmd = 'eksekusi_klik'; payload = n; break; }
                 
                 // Fitur Baru
                 if (['baca', 'otomatis'].includes(w)) { cmd = 'auto_bawah'; break; }
@@ -122,11 +144,26 @@ function startRecognition() {
     try { recognition.start(); } catch (e) {}
 }
 
+// --- Anti-Throttling Hack ---
+// Memutar frekuensi tak terdengar agar Chrome mengira tab ini sedang memutar lagu (tidak akan pernah ditidurkan)
+function startAntiThrottlingAudio() {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 20000; // Ultrasonik
+        gainNode.gain.value = 0.01;
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+    } catch (e) {}
+}
+
 navigator.mediaDevices.getUserMedia({ audio: true })
     .then((stream) => {
-        // Hentikan stream pancingan ini karena webkitSpeechRecognition punya jalurnya sendiri.
-        // Membiarkannya menyala bisa membuat bentrok (hardware lock) saat mesin suara restart tiap 30 detik.
         stream.getTracks().forEach(track => track.stop());
+        startAntiThrottlingAudio();
         startRecognition();
     })
     .catch((err) => {
