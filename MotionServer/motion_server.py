@@ -101,6 +101,7 @@ def main():
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     
     history = [] # Menyimpan (waktu, y, x)
+    y_history_long = [] # Untuk baseline (mencegah false trigger saat kembali dari bawah)
     last_trigger_time = 0
     COOLDOWN = 1.5 
     THRESHOLD = 0.05 
@@ -129,26 +130,35 @@ def main():
             now = time.time()
             history.append((now, current_y, current_x))
             
-            # Hapus rekam jejak yang umurnya lebih dari 0.35 detik
-            # (Ini membuat gerakan lambat seperti majuin kursi, garuk rambut, tidak akan pernah terakumulasi menembus Threshold)
+            # Update baseline Y (menyimpan posisi Y wajah selama 10 detik terakhir)
+            y_history_long.append((now, current_y))
+            y_history_long = [h for h in y_history_long if now - h[0] <= 10.0]
+            
+            # Hitung nilai tengah (median) sebagai posisi "layar/netral"
+            if len(y_history_long) > 10:
+                sorted_y = sorted([h[1] for h in y_history_long])
+                baseline_y = sorted_y[len(sorted_y) // 2]
+            else:
+                baseline_y = current_y
+            
             history = [h for h in history if now - h[0] <= 0.35]
             
             if len(history) > 1 and (now - last_trigger_time > COOLDOWN):
                 past_y = history[0][1]
                 past_x = history[0][2]
                 
-                # Jarak yang ditempuh murni dalam sepersekian detik (Kecepatan Tajam)
                 travel_y = current_y - past_y
                 travel_x = current_x - past_x
                 
-                # Cek sumbu mana yang hentakannya lebih kuat
                 if abs(travel_y) > abs(travel_x):
-                    if travel_y > THRESHOLD:
+                    # Bawah: Harus bergerak ke bawah (travel_y > THRESHOLD) DAN posisinya di bawah layar normal
+                    if travel_y > THRESHOLD and current_y > baseline_y + 0.02:
                         print(f"[{time.strftime('%H:%M:%S')}] Mengangguk BAWAH")
                         broadcast_command('bawah')
                         last_trigger_time = now
                         history.clear()
-                    elif travel_y < -THRESHOLD:
+                    # Atas: Harus bergerak ke atas (travel_y < -THRESHOLD) DAN posisinya di atas layar normal
+                    elif travel_y < -THRESHOLD and current_y < baseline_y - 0.02:
                         print(f"[{time.strftime('%H:%M:%S')}] Mendongak ATAS")
                         broadcast_command('atas')
                         last_trigger_time = now
@@ -165,9 +175,7 @@ def main():
                         last_trigger_time = now
                         history.clear()
 
-            # Gambar kotak di wajah
             cv2.rectangle(image, (x, y), (x+w, y+h), (255, 0, 0), 2)
-            # Gambar titik pusat
             cx, cy = int(x + w/2), int(y + h/2)
             cv2.circle(image, (cx, cy), 8, (0, 255, 0), cv2.FILLED)
                 
