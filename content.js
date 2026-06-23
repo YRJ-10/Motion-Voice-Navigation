@@ -56,6 +56,7 @@ if (typeof window.voiceNavInjected === 'undefined') {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.type === 'EXECUTE_COMMAND') {
             const cmd = request.command;
+            const payload = request.payload;
             
             // Auto-stop jika ada perintah manual selain pengaturan baca
             if (window.autoScrollInterval && !['cepat', 'lambat', 'auto_bawah', 'auto_atas'].includes(cmd)) {
@@ -129,12 +130,32 @@ if (typeof window.voiceNavInjected === 'undefined') {
                 removeClickLabels();
             }
             else if (cmd === 'eksekusi_klik') {
-                const target = clickMap.get(payload); // payload adalah angka int
+                const numKey = parseInt(payload, 10);
+                console.log('[AI-KLIK] Menerima perintah. payload:', payload, '→ numKey:', numKey, '| clickMap size:', clickMap.size);
+                const target = clickMap.get(numKey);
+                console.log('[AI-KLIK] Target ditemukan:', target);
                 if (target) {
-                    target.focus();
-                    target.click();
-                    const clickEvent = new MouseEvent('click', { view: window, bubbles: true, cancelable: true });
-                    target.dispatchEvent(clickEvent);
+                    try {
+                        if (typeof target.focus === 'function') target.focus();
+                        if (typeof target.click === 'function') target.click();
+                        
+                        const rect = target.getBoundingClientRect();
+                        const cx = rect.left + rect.width / 2;
+                        const cy = rect.top + rect.height / 2;
+                        const eventOpts = { view: window, bubbles: true, cancelable: true, clientX: cx, clientY: cy };
+                        
+                        target.dispatchEvent(new PointerEvent('pointerdown', eventOpts));
+                        target.dispatchEvent(new MouseEvent('mousedown', eventOpts));
+                        target.dispatchEvent(new PointerEvent('pointerup', eventOpts));
+                        target.dispatchEvent(new MouseEvent('mouseup', eventOpts));
+                        target.dispatchEvent(new MouseEvent('click', eventOpts));
+                    } catch (e) {
+                        console.error('[AI-KLIK] Error:', e);
+                    } finally {
+                        removeClickLabels();
+                    }
+                } else {
+                    console.warn('[AI-KLIK] TIDAK ADA TARGET untuk nomor:', numKey, '| Keys di clickMap:', [...clickMap.keys()]);
                     removeClickLabels();
                 }
             }

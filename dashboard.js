@@ -112,7 +112,7 @@ function startRecognition() {
         }
 
         if (cmd) {
-            if ((cmd === 'cari' || cmd === 'buka') && !isFinal) {
+            if ((cmd === 'cari' || cmd === 'buka' || cmd === 'eksekusi_klik') && !isFinal) {
                 return;
             }
 
