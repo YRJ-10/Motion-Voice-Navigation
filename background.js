@@ -14,6 +14,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (!url.includes('.')) url += '.com';
         chrome.tabs.create({ url: 'https://www.' + url });
         return;
+    } else if (cmd === 'pindah_tab' && payload) {
+        chrome.tabs.query({}, function(allTabs) {
+            const term = payload.toLowerCase();
+            const match = allTabs.find(t => (t.title && t.title.toLowerCase().includes(term)) || (t.url && t.url.toLowerCase().includes(term)));
+            if (match) {
+                chrome.tabs.update(match.id, {active: true});
+                chrome.windows.update(match.windowId, {focused: true});
+            }
+        });
+        return;
     }
 
     chrome.tabs.query({active: true}, function(tabs) {

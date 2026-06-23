@@ -80,6 +80,19 @@ function startRecognition() {
             payload = newPhrase.substring(newPhrase.indexOf('buka ') + 5).trim();
         }
         
+        // --- Fitur Pro: Dikte, Pindah Tab, TTS ---
+        else if (newPhrase.startsWith('ketik ')) {
+            cmd = 'ketik';
+            payload = newPhrase.substring(6).trim();
+        }
+        else if (newPhrase.startsWith('pindah tab ') || newPhrase.startsWith('ke tab ')) {
+            cmd = 'pindah_tab';
+            let prefixLen = newPhrase.startsWith('pindah tab ') ? 11 : 7;
+            payload = newPhrase.substring(prefixLen).trim();
+        }
+        else if (newPhrase.includes('berhenti baca') || newPhrase.includes('stop baca')) cmd = 'stop_baca';
+        else if (newPhrase.includes('bacakan') || newPhrase.includes('baca ini')) cmd = 'bacakan';
+        
         if (!cmd && newWords.length > 0) {
             for (let i = newWords.length - 1; i >= 0; i--) {
                 let w = newWords[i];
@@ -108,11 +121,12 @@ function startRecognition() {
                 if (['cepat', 'ngebut'].includes(w)) { cmd = 'cepat'; break; }
                 if (['lambat', 'pelan'].includes(w)) { cmd = 'lambat'; break; }
                 if (['suka', 'like', 'mantap'].includes(w)) { cmd = 'suka'; break; }
+                if (['bacakan'].includes(w)) { cmd = 'bacakan'; break; }
             }
         }
 
         if (cmd) {
-            if ((cmd === 'cari' || cmd === 'buka' || cmd === 'eksekusi_klik') && !isFinal) {
+            if ((cmd === 'cari' || cmd === 'buka' || cmd === 'eksekusi_klik' || cmd === 'ketik' || cmd === 'pindah_tab') && !isFinal) {
                 return;
             }
 

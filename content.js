@@ -158,6 +158,38 @@ if (typeof window.voiceNavInjected === 'undefined') {
             else if (cmd === 'batal_klik') {
                 removeClickLabels();
             }
+            // --- Fitur Pro: Dikte, TTS ---
+            else if (cmd === 'ketik' && payload) {
+                const el = document.activeElement;
+                if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)) {
+                    if (el.isContentEditable) {
+                        el.innerText = payload;
+                    } else {
+                        el.value = payload;
+                    }
+                    // Trigger events agar framework seperti React menyadari perubahan nilai
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+            else if (cmd === 'bacakan') {
+                window.speechSynthesis.cancel(); // Hentikan yang sedang berjalan
+                
+                // Coba cari wadah konten artikel atau utama
+                let contentEl = document.querySelector('article') || document.querySelector('main') || document.querySelector('.content') || document.body;
+                let textToRead = contentEl.innerText || "";
+                
+                // Ambil sebagian besar agar tidak error
+                if (textToRead.length > 3000) textToRead = textToRead.substring(0, 3000);
+                
+                const utterance = new SpeechSynthesisUtterance(textToRead);
+                utterance.lang = 'id-ID';
+                utterance.rate = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+            else if (cmd === 'stop_baca') {
+                window.speechSynthesis.cancel();
+            }
             else if (cmd === 'eksekusi_klik') {
                 const numKey = parseInt(payload, 10);
                 console.log('[AI-KLIK] Menerima perintah. payload:', payload, '→ numKey:', numKey, '| clickMap size:', clickMap.size);
