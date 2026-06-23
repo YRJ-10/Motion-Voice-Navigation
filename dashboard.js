@@ -61,7 +61,7 @@ function startRecognition() {
         else if (newPhrase.includes('layar penuh') || newPhrase.includes('full screen')) cmd = 'layar_penuh';
         else if (newPhrase.includes('keluar layar') || newPhrase.includes('exit fullscreen')) cmd = 'keluar_layar';
         else if (newPhrase.includes('putar') || newPhrase.includes('jeda') || newPhrase.includes('stop') || newPhrase.includes('play') || newPhrase.includes('pause')) cmd = 'putar_video';
-        else if (newPhrase.includes('bisukan') || newPhrase.includes('mute') || newPhrase.includes('suara')) cmd = 'suara_video';
+        else if (newPhrase.includes('diamkan') || newPhrase.includes('mute')) cmd = 'suara_video';
         
         // --- Fitur Klik Cerdas ---
         else if (newPhrase === 'klik' || newPhrase === 'mode klik' || newPhrase === 'tampilkan klik') cmd = 'mode_klik';

@@ -145,9 +145,7 @@ if (typeof window.voiceNavInjected === 'undefined') {
                     if (btn) btn.click();
                 } else {
                     const video = document.querySelector('video');
-                    if (video) {
-                        video.muted = !video.muted;
-                    }
+                    if (video) video.muted = !video.muted;
                 }
             }
             
