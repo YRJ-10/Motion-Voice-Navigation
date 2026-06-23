@@ -58,6 +58,8 @@ function startRecognition() {
         else if (newPhrase.includes('perkecil') || newPhrase.includes('zoom out')) cmd = 'perkecil';
         else if (newPhrase.includes('salin') || newPhrase.includes('copy')) cmd = 'salin';
         else if (newPhrase.includes('tempel') || newPhrase.includes('paste')) cmd = 'tempel';
+        else if (newPhrase.includes('layar penuh') || newPhrase.includes('full screen')) cmd = 'layar_penuh';
+        else if (newPhrase.includes('keluar layar') || newPhrase.includes('exit fullscreen')) cmd = 'keluar_layar';
         else if (newPhrase.includes('cari ')) {
             cmd = 'cari';
             payload = newPhrase.substring(newPhrase.indexOf('cari ') + 5).trim();
@@ -77,6 +79,7 @@ function startRecognition() {
                 if (['enter', 'masuk'].includes(w)) { cmd = 'enter'; break; }
                 if (['segarkan', 'refresh', 'ulang'].includes(w)) { cmd = 'segarkan'; break; }
                 if (['kembali', 'mundur', 'balik'].includes(w)) { cmd = 'kembali'; break; }
+                if (['penuh', 'fullscreen'].includes(w)) { cmd = 'layar_penuh'; break; }
                 
                 // Fitur Baru
                 if (['baca', 'otomatis'].includes(w)) { cmd = 'auto_bawah'; break; }

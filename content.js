@@ -29,6 +29,34 @@ if (typeof window.voiceNavInjected === 'undefined') {
             else if (cmd === 'dasar') { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }
             else if (cmd === 'salin') { document.execCommand('copy'); }
             else if (cmd === 'tempel') { document.execCommand('paste'); }
+            else if (cmd === 'layar_penuh') {
+                if (!document.fullscreenElement) {
+                    if (window.location.hostname.includes('youtube.com')) {
+                        const btn = document.querySelector('.ytp-fullscreen-button');
+                        if (btn) btn.click();
+                    } else {
+                        const video = document.querySelector('video');
+                        if (video && video.requestFullscreen) {
+                            video.requestFullscreen().catch(() => {});
+                        } else {
+                            document.documentElement.requestFullscreen().catch(() => {});
+                        }
+                    }
+                } else {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                }
+            }
+            else if (cmd === 'keluar_layar') {
+                if (document.fullscreenElement) {
+                    if (window.location.hostname.includes('youtube.com')) {
+                        const btn = document.querySelector('.ytp-fullscreen-button');
+                        if (btn) btn.click();
+                        else if (document.exitFullscreen) document.exitFullscreen();
+                    } else {
+                        if (document.exitFullscreen) document.exitFullscreen();
+                    }
+                }
+            }
             
             // Fitur Baru: Auto Scroll & Auto Like
             else if (cmd === 'auto_bawah' || cmd === 'auto_atas') {
