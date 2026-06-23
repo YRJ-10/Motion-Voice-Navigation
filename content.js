@@ -16,40 +16,68 @@ if (typeof window.voiceNavInjected === 'undefined') {
         removeClickLabels();
         const selectors = 'a, button, input, [role="button"], video, .yt-simple-endpoint';
         const elements = document.querySelectorAll(selectors);
-        
         let counter = 1;
+        const drawnRects = [];
+        
         elements.forEach(el => {
             const rect = el.getBoundingClientRect();
-            const isVisible = rect.width > 0 && rect.height > 0 && 
-                rect.top < (window.innerHeight || document.documentElement.clientHeight) && 
+            
+            // 1. Filter Ukuran Minimum (Abaikan elemen sampah)
+            if (rect.width < 15 || rect.height < 15) return;
+            
+            // Cek batas layar
+            const inViewport = rect.top < (window.innerHeight || document.documentElement.clientHeight) && 
                 rect.bottom > 0 && 
                 rect.left < (window.innerWidth || document.documentElement.clientWidth) && 
                 rect.right > 0;
+            if (!inViewport) return;
+            
+            // 2. Filter Visibilitas Asli (CSS)
+            const style = window.getComputedStyle(el);
+            if (style.opacity === '0' || style.visibility === 'hidden' || style.display === 'none' || style.pointerEvents === 'none') return;
+            
+            // 3. Filter Tumpang Tindih (Anti-Overlap)
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            let isOverlapping = false;
+            
+            for (let drawn of drawnRects) {
+                // Jarak antar pusat atau jarak antar sudut kiri atas
+                const distCenter = Math.hypot(drawn.cx - cx, drawn.cy - cy);
+                const distCorner = Math.hypot(drawn.left - rect.left, drawn.top - rect.top);
                 
-            if (isVisible) {
-                const label = document.createElement('div');
-                label.innerText = counter;
-                label.style.cssText = `
-                    position: fixed;
-                    top: ${rect.top <= 0 ? 5 : rect.top}px;
-                    left: ${rect.left <= 0 ? 5 : rect.left}px;
-                    background-color: #ffeb3b;
-                    color: #000;
-                    font-family: Arial, sans-serif;
-                    font-weight: bold;
-                    font-size: 13px;
-                    padding: 2px 5px;
-                    border-radius: 4px;
-                    border: 2px solid #000;
-                    z-index: 2147483647;
-                    pointer-events: none;
-                    box-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-                `;
-                document.body.appendChild(label);
-                activeClickLabels.push(label);
-                clickMap.set(counter, el);
-                counter++;
+                // Jika posisi X,Y sangat berdekatan (< 20px), anggap itu elemen yang sama/berlapis
+                if (distCenter < 20 || distCorner < 20) {
+                    isOverlapping = true;
+                    break;
+                }
             }
+            if (isOverlapping) return;
+            
+            // Lolos semua filter, simpan jejak
+            drawnRects.push({ cx: cx, cy: cy, left: rect.left, top: rect.top });
+                
+            const label = document.createElement('div');
+            label.innerText = counter;
+            label.style.cssText = `
+                position: fixed;
+                top: ${rect.top <= 0 ? 5 : rect.top}px;
+                left: ${rect.left <= 0 ? 5 : rect.left}px;
+                background-color: #ffeb3b;
+                color: #000;
+                border: 2px solid #000;
+                border-radius: 4px;
+                padding: 2px 6px;
+                font-size: 14px;
+                font-weight: bold;
+                z-index: 999999;
+                pointer-events: none;
+                box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            `;
+            document.body.appendChild(label);
+            activeClickLabels.push(label);
+            clickMap.set(counter, el);
+            counter++;
         });
     }
 
