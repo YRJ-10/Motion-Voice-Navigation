@@ -100,8 +100,7 @@ def main():
     # Inisialisasi Detektor Wajah Bawaan OpenCV
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     
-    neutral_y = None
-    neutral_x = None
+    history = [] # Menyimpan (waktu, y, x)
     last_trigger_time = 0
     COOLDOWN = 1.5 
     THRESHOLD = 0.05 
@@ -127,45 +126,44 @@ def main():
             current_y = (y + h / 2) / image_height
             current_x = (x + w / 2) / image_width
             
-            if neutral_y is None:
-                neutral_y = current_y
-                neutral_x = current_x
-            else:
-                neutral_y = (neutral_y * 0.95) + (current_y * 0.05)
-                neutral_x = (neutral_x * 0.95) + (current_x * 0.05)
-            
-            delta_y = current_y - neutral_y
-            delta_x = current_x - neutral_x
             now = time.time()
+            history.append((now, current_y, current_x))
             
-            if now - last_trigger_time > COOLDOWN:
-                # Cek sumbu mana yang pergerakannya lebih kuat
-                if abs(delta_y) > abs(delta_x):
-                    if delta_y > THRESHOLD:
+            # Hapus rekam jejak yang umurnya lebih dari 0.35 detik
+            # (Ini membuat gerakan lambat seperti majuin kursi, garuk rambut, tidak akan pernah terakumulasi menembus Threshold)
+            history = [h for h in history if now - h[0] <= 0.35]
+            
+            if len(history) > 1 and (now - last_trigger_time > COOLDOWN):
+                past_y = history[0][1]
+                past_x = history[0][2]
+                
+                # Jarak yang ditempuh murni dalam sepersekian detik (Kecepatan Tajam)
+                travel_y = current_y - past_y
+                travel_x = current_x - past_x
+                
+                # Cek sumbu mana yang hentakannya lebih kuat
+                if abs(travel_y) > abs(travel_x):
+                    if travel_y > THRESHOLD:
                         print(f"[{time.strftime('%H:%M:%S')}] Mengangguk BAWAH")
                         broadcast_command('bawah')
                         last_trigger_time = now
-                        neutral_y = current_y
-                        neutral_x = current_x
-                    elif delta_y < -THRESHOLD:
+                        history.clear()
+                    elif travel_y < -THRESHOLD:
                         print(f"[{time.strftime('%H:%M:%S')}] Mendongak ATAS")
                         broadcast_command('atas')
                         last_trigger_time = now
-                        neutral_y = current_y
-                        neutral_x = current_x
+                        history.clear()
                 else:
-                    if delta_x > THRESHOLD:
+                    if travel_x > THRESHOLD:
                         print(f"[{time.strftime('%H:%M:%S')}] Menoleh KIRI")
                         broadcast_command('kiri')
                         last_trigger_time = now
-                        neutral_y = current_y
-                        neutral_x = current_x
-                    elif delta_x < -THRESHOLD:
+                        history.clear()
+                    elif travel_x < -THRESHOLD:
                         print(f"[{time.strftime('%H:%M:%S')}] Menoleh KANAN")
                         broadcast_command('kanan')
                         last_trigger_time = now
-                        neutral_y = current_y
-                        neutral_x = current_x
+                        history.clear()
 
             # Gambar kotak di wajah
             cv2.rectangle(image, (x, y), (x+w, y+h), (255, 0, 0), 2)
