@@ -1,65 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="popup.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <img src="icons/icon_48.png" alt="Logo" class="logo">
-            <h2>Motion Voice Nav</h2>
-        </div>
-        
-        <p class="subtitle">Kontrol browser tanpa sentuhan.</p>
-        
-        <button id="toggle-btn" class="start-btn">
-            <span class="btn-icon">🎙️</span> Buka Mesin Pendeteksi
-        </button>
-        
-        <div class="instructions">
-            <p class="inst-title">Daftar Perintah Suara</p>
-            <div class="cmd-list">
-                <div class="cmd-item">
-                    <span>↕️ Navigasi & Scroll</span>
-                    <span>Bawah, Atas, Kanan, Kiri, Puncak, Dasar</span>
-                </div>
-                <div class="cmd-item">
-                    <span>🤖 Auto-Scroll & Like</span>
-                    <span>"Baca", "Cepat", "Lambat", "Suka"</span>
-                </div>
-                <div class="cmd-item">
-                    <span>🌐 Manajemen Tab</span>
-                    <span>Tab Baru, Tutup Tab, Geser Kanan/Kiri</span>
-                </div>
-                <div class="cmd-item">
-                    <span>🔍 Pencarian Cerdas</span>
-                    <span>"Buka [nama web]", "Cari [kata]"</span>
-                </div>
-                <div class="cmd-item">
-                    <span>⚙️ Aksi Browser &amp; Media</span>
-                    <span>Layar Penuh, Keluar Layar, Putar, Jeda, <b>Diamkan</b></span>
-                </div>
-                <div class="cmd-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #444;">
-                    <span style="color: #ffeb3b;">🎯 Klik Pintar (Visual)</span>
-                    <span style="font-size: 0.85em; color: #aaa;">Ucapkan <b>"Klik"</b> untuk memunculkan nomor.<br>Ucapkan nomor (misal <b>"Lima"</b>) untuk mengeklik.</span>
-                </div>
-                <div class="cmd-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #444;">
-                    <span style="color: #ff9800;">🚀 Mode Pro (Baru)</span>
-                    <span style="font-size: 0.85em; color: #aaa;"><b>"Ketik [teks]"</b> untuk mengisi form/kolom.<br><b>"Pindah tab [nama]"</b> lompat cepat.</span>
-                </div>
-                <div class="cmd-item">
-                    <span>⌨️ Aksi Keyboard</span>
-                    <span>Salin, Tempel, Enter, Spasi (Jeda Video)</span>
-                </div>
-                <div class="cmd-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #444;">
-                    <span style="color: #4CAF50;">🤖 AI Motion Control</span>
-                    <span style="font-size: 0.85em; color: #aaa;">Atas/Bawah = Scroll Atas/Bawah<br>Kanan/Kiri = Scroll Kanan/Kiri</span>
+    <main class="popup-shell">
+        <section class="hero">
+            <div class="brand">
+                <img src="icons/icon_48.png" alt="Motion Voice Nav" class="logo">
+                <div>
+                    <p class="eyebrow">Browser assistant</p>
+                    <h1>Motion Voice Nav</h1>
                 </div>
             </div>
-        </div>
-    </div>
+            <p class="subtitle">Kontrol browser dengan suara dan gerakan kepala.</p>
+        </section>
+
+        <button id="toggle-btn" class="primary-action" type="button">
+            <span class="action-icon" aria-hidden="true"></span>
+            <span>Buka Mesin Pendeteksi</span>
+        </button>
+
+        <section class="quick-strip" aria-label="Fitur utama">
+            <div>
+                <strong>Voice</strong>
+                <span>Perintah cepat</span>
+            </div>
+            <div>
+                <strong>Visual</strong>
+                <span>Klik pintar</span>
+            </div>
+            <div>
+                <strong>Motion</strong>
+                <span>Scroll kepala</span>
+            </div>
+        </section>
+
+        <section class="command-panel" aria-labelledby="commands-title">
+            <div class="section-header">
+                <p class="eyebrow">Cheat sheet</p>
+                <h2 id="commands-title">Perintah</h2>
+            </div>
+
+            <div class="command-grid">
+                <article class="command-card">
+                    <span class="card-icon">NAV</span>
+                    <h3>Navigasi</h3>
+                    <p>Bawah, Atas, Kanan, Kiri, Puncak, Dasar</p>
+                </article>
+
+                <article class="command-card">
+                    <span class="card-icon">RUN</span>
+                    <h3>Auto-scroll</h3>
+                    <p>Baca, Cepat, Lambat, Suka</p>
+                </article>
+
+                <article class="command-card">
+                    <span class="card-icon">TAB</span>
+                    <h3>Tab</h3>
+                    <p>Tab Baru, Tutup Tab, Geser Kanan, Geser Kiri, Pindah tab [nama]</p>
+                </article>
+
+                <article class="command-card">
+                    <span class="card-icon">WEB</span>
+                    <h3>Pencarian</h3>
+                    <p>Buka [nama web], Cari [kata]</p>
+                </article>
+
+                <article class="command-card">
+                    <span class="card-icon">MED</span>
+                    <h3>Media</h3>
+                    <p>Layar Penuh, Keluar Layar, Putar, Jeda, Diamkan</p>
+                </article>
+
+                <article class="command-card">
+                    <span class="card-icon">CLK</span>
+                    <h3>Klik Pintar</h3>
+                    <p>Ucapkan "Klik", lalu sebut nomor tujuan.</p>
+                </article>
+
+                <article class="command-card">
+                    <span class="card-icon">KEY</span>
+                    <h3>Keyboard</h3>
+                    <p>Ketik [teks], Salin, Tempel, Enter, Spasi</p>
+                </article>
+
+                <article class="command-card motion-card">
+                    <span class="card-icon">CAM</span>
+                    <h3>Motion</h3>
+                    <p>Pakai kamera: Atas, Bawah, Kanan, Kiri untuk scroll.</p>
+                </article>
+            </div>
+        </section>
+    </main>
     <script src="popup.js"></script>
 </body>
 </html>
